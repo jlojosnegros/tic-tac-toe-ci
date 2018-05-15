@@ -32,7 +32,12 @@ import static org.testcontainers.containers.BrowserWebDriverContainer.VncRecordi
 public class SeleniumSytemTest {
 
     @Rule
-    public BrowserWebDriverContainer chrome = new BrowserWebDriverContainer()
+    public BrowserWebDriverContainer chromeOne = new BrowserWebDriverContainer()
+            .withDesiredCapabilities(DesiredCapabilities.chrome())
+            .withRecordingMode(RECORD_ALL, new File("target"));
+
+    @Rule
+    public BrowserWebDriverContainer chromeTwo= new BrowserWebDriverContainer()
             .withDesiredCapabilities(DesiredCapabilities.chrome())
             .withRecordingMode(RECORD_ALL, new File("target"));
 
@@ -69,8 +74,8 @@ public class SeleniumSytemTest {
 
     @Before
     public void beforeEach() {
-        driverPlayerOne = chrome.getWebDriver();
-        driverPlayerTwo = chrome.getWebDriver();
+        driverPlayerOne = chromeOne.getWebDriver();
+        driverPlayerTwo = chromeTwo.getWebDriver();
     }
 
     @After
