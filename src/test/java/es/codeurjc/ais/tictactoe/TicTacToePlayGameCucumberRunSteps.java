@@ -27,14 +27,6 @@ import static org.testcontainers.containers.BrowserWebDriverContainer.VncRecordi
 
 public class TicTacToePlayGameCucumberRunSteps {
 
-    @Rule
-    public BrowserWebDriverContainer chromeOne = new BrowserWebDriverContainer()
-            .withDesiredCapabilities(DesiredCapabilities.chrome())
-            .withRecordingMode(RECORD_ALL, new File("target"));
-    @Rule
-    public BrowserWebDriverContainer chromeTwo= new BrowserWebDriverContainer()
-            .withDesiredCapabilities(DesiredCapabilities.chrome())
-            .withRecordingMode(RECORD_ALL, new File("target"));
 
     static String ip = "192.168.16.1"; // ifconfig docker0
     static String URL_SUT = "http://" + ip +":12345";
@@ -46,8 +38,8 @@ public class TicTacToePlayGameCucumberRunSteps {
 
     @Before
     public void beforeEach() {
-        driverPlayerOne = chromeOne.getWebDriver();
-        driverPlayerTwo = chromeTwo.getWebDriver();
+        driverPlayerOne = TicTacToeGameCucumberTest.chromeOne.getWebDriver();
+        driverPlayerTwo = TicTacToeGameCucumberTest.chromeTwo.getWebDriver();
     }
 
     @After
