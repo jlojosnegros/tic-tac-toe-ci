@@ -12,11 +12,23 @@ node
     }
     stage ('Test')
     {
-        docker.image('maven').inside('-p 12345:8080 -v $HOME/.m2:/root/.m2 ' + '-v /var/run/docker.sock:/var/run/docker.sock')
+        try
         {
-            sh 'mvn -Dtest=BoardTest test'
+            docker.image('maven').inside('-p 12345:8080 -v $HOME/.m2:/root/.m2 ' + '-v /var/run/docker.sock:/var/run/docker.sock')
+            {
+                sh 'mvn test'
+            }
         }
-        junit testResults: '**/target/surefire-reports/*.xml', keepLongStdio: true
+        catch (Exception err)
+        {
+            sh 'return -1'
+        }
+        finally
+        {
+            archiveArtifacts '**/target/*.flv'
+            junit testResults: '**/target/surefire-reports/*.xml', keepLongStdio: true
+        }
+
     }
 
     stage('Build Target')
@@ -28,16 +40,12 @@ node
     }
 
     parallel docker: {
-        try {
-            stage ('Docker image')
-            {
-                sh 'chmod 777 ./build-merge-image.sh'
-                sh './build-merge-image.sh'
-                sh 'docker login -u practicacimasterupm -p 12341234'
-                sh 'docker push practicacimasterupm/curso-ci-practica:dev'
-            }
-        } catch (Exception err) {
-            echo "Unable to create Docker image"
+        stage ('Docker image')
+        {
+            sh 'chmod 777 ./build-merge-image.sh'
+            sh './build-merge-image.sh'
+            sh 'docker login -u practicacimasterupm -p 12341234'
+            sh 'docker push practicacimasterupm/curso-ci-practica:dev'
         }
     }, archiva: {
         try {
@@ -49,7 +57,7 @@ node
                        ).trim()
 
                 docker.image('maven').inside('-v $HOME/.m2:/root/.m2') {
-                    sh ' mvn deploy -DskipTests -Dmaven.test.skip=true -DarchivaURL=http://localhost:8484'
+                    sh ' mvn deploy -DskipTests -Dmaven.test.skip=true -DarchivaURL=http://' + ARCHIVA_IP + ':8484'
                 }
 
             }
