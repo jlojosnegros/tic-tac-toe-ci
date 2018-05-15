@@ -82,28 +82,8 @@ public class SeleniumSytemTest {
     @Test
     public void test() {
         // Exercise and verify
-//        String interfaceName = "docker0";
         String ip = "192.168.16.1"; // ifconfig docker0
-//        try {
-//            NetworkInterface networkInterface = NetworkInterface.getByName(interfaceName);
-//            Enumeration<InetAddress> inetAddress = networkInterface.getInetAddresses();
-//            InetAddress currentAddress;
-//            currentAddress = inetAddress.nextElement();
-//
-//            while(inetAddress.hasMoreElements())
-//            {
-//                currentAddress = inetAddress.nextElement();
-//                if(currentAddress instanceof Inet4Address && !currentAddress.isLoopbackAddress())
-//                {
-//                    ip = currentAddress.toString();
-//                    break;
-//                }
-//            }
-//        }
-//        catch (java.net.SocketException e)
-//        {
-//            assertThat(false);
-//        }
+
 
         System.out.println("-++++ " + ip);
 
@@ -124,9 +104,8 @@ public class SeleniumSytemTest {
 
         index = (index+1)%drivers.length;
 
-        //WebDriverWait wait = new WebDriverWait(drivers[index], 30);
-
-        //wait.until(ExpectedConditions.alertIsPresent());
+        WebDriverWait wait = new WebDriverWait(drivers[index], 30);
+        wait.until(ExpectedConditions.alertIsPresent());
 
         String alert_result = drivers[index].switchTo().alert().getText();
         assertThat(alert_result.toLowerCase()).startsWith(result.toLowerCase());
