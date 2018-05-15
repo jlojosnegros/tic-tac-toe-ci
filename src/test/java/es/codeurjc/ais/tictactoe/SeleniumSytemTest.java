@@ -59,7 +59,6 @@ public class SeleniumSytemTest {
 
     @BeforeClass
     public static void beforeAll() {
-        ChromeDriverManager.getInstance().setup();
         WebApp.start();
     }
 
@@ -106,7 +105,9 @@ public class SeleniumSytemTest {
             assertThat(false);
         }
 
-        String URL_SUT = "http://"+ip+":8080";
+        System.out.println("-++++ " + ip);
+
+        String URL_SUT = "http://"+ip+":12345";
         goToHost(driverPlayerOne, URL_SUT);
         registerUser(namePlayerOne, driverPlayerOne);
 
