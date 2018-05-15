@@ -1,0 +1,19 @@
+node {
+    
+   stage ('Checkout') {
+        
+      git url: 'http://172.18.0.6:8080/tic-tac-toe'
+   }
+
+   stage ('Build Java') {
+
+      docker.image('maven').inside('-v $HOME/.m2:/root/.m2') {
+
+        sh 'mvn -Dtest=BoardTest,TicTacToeGameTest,TicTacToeGamePlayTest test'
+      }
+   }
+  always {
+      step([$class: 'JUnitResultArchiver', 
+         testResults: '**/target/surefire-reports/TEST-*.xml'])
+  }
+}
