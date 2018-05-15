@@ -12,7 +12,11 @@ node {
         sh 'mvn -Dtest=BoardTest,TicTacToeGameTest,TicTacToeGamePlayTest test'
       }
    }
-  always {
-  	 junit 'target/surefire-reports/*.xml'
-  }
+   post
+    {
+    	 always
+	 {
+	 	junit testResults: '**/target/surefire-reports/*.xml', keepLongStdio: true
+	 }
+    }
 }

@@ -16,15 +16,24 @@ node
 
     stage ('Archive')
     {
-	ARCHIVA_IP = sh(
-		   script: 'docker inspect -f \'{{.NetworkSettings.IPAddress }}\' archiva', returnStdout: true
-	).trim()
+	ARCHIVA_IP = sh (
+    	       script: 'docker inspect -f \'{{.NetworkSettings.IPAddress }}\' archiva',
+    	       returnStdout: true
+    	       ).trim()
 
-
-	docker.image('maven').inside('-v $HOME\.m2:/root/m2') {
+	docker.image('maven').inside('-v $HOME/.m2:/root/.m2') {
 
 	    sh ' mvn package -DskipTests'
 	    sh ' mvn deploy -DarchivaURL=http://' + ARCHIVA_IP + ':8080'
 	}
     }
+
+    post
+    {
+    	 always
+	 {
+	 	junit testResults: '**/target/surefire-reports/*.xml', keepLongStdio: true
+	 }
+    }
+
 }
