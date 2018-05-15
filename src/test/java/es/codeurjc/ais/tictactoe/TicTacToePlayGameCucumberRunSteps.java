@@ -59,6 +59,14 @@ public class TicTacToePlayGameCucumberRunSteps {
 
     @Given("^I have a tictactoe game at (-?.*)$")
     public void i_have_a_tictactoe_game_at(String url) throws Throwable {
+        if (null == url)
+        {
+            System.out.println("TENEMOS UN NULL EN URL!!!");
+        }
+        else
+        {
+            System.out.println("!!!URL: " + url);
+        }
         goToHost(driverPlayerOne, url);
         goToHost(driverPlayerTwo, url);
 
