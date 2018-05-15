@@ -123,9 +123,10 @@ public class SeleniumSytemTest {
         }
 
         index = (index+1)%drivers.length;
-        WebDriverWait wait = new WebDriverWait(drivers[index], 30);
 
-        wait.until(ExpectedConditions.alertIsPresent());
+        //WebDriverWait wait = new WebDriverWait(drivers[index], 30);
+
+        //wait.until(ExpectedConditions.alertIsPresent());
 
         String alert_result = drivers[index].switchTo().alert().getText();
         assertThat(alert_result.toLowerCase()).startsWith(result.toLowerCase());
