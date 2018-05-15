@@ -1,8 +1,14 @@
 node                     
 {                        
     stage ('Checkout')   
-    {                    
-        git url: 'http://172.18.0.6:8080/tic-tac-toe'                                                  
+    {
+	GERRIT_IP = sh (
+               script: 'docker inspect -f \'{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}\' codeurjc-forge-gerrit',
+               returnStdout: true
+	       ).trim()
+
+
+        git url: 'http://' + GERRIT_IP + ':8080/tic-tac-toe'
     }                    
     stage ('Build and test')                       
     {                    
