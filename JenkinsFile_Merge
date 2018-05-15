@@ -1,6 +1,6 @@
-node                     
-{                        
-    stage ('Checkout')   
+node
+{
+    stage ('Checkout')
     {
 	GERRIT_IP = sh (
                script: 'docker inspect -f \'{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}\' codeurjc-forge-gerrit',
@@ -9,27 +9,37 @@ node
 
 
         git url: 'http://' + GERRIT_IP + ':8080/tic-tac-toe'
-    }                    
-    stage ('Build and test')                       
-    {                    
-        docker.image('maven').inside('-p 12345:8080 -v $HOME/.m2:/root/.m2 ' + '-v /var/run/docker.sock:/var/run/docker.sock') 
-        {                
-            sh 'mvn -Dtest=BoardTest test'                          
+    }
+    stage ('Build and test')
+    {
+        docker.image('maven').inside('-p 12345:8080 -v $HOME/.m2:/root/.m2 ' + '-v /var/run/docker.sock:/var/run/docker.sock')
+        {
+            sh 'mvn -Dtest=BoardTest test'
         }
         junit testResults: '**/target/surefire-reports/*.xml', keepLongStdio: true
-    }                    
+    }
 
-    stage ('Archive')    
-    {                    
+    
+    stage ('Archive')
+    {
         ARCHIVA_IP = sh (
                script: 'docker inspect -f \'{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}\' codeurjc-forge-archiva',
-               returnStdout: true                  
-               ).trim()  
+               returnStdout: true
+               ).trim()
 
-        docker.image('maven').inside('-v $HOME/.m2:/root/.m2') {                                        
+        docker.image('maven').inside('-v $HOME/.m2:/root/.m2') {
 
-            sh ' mvn package -DskipTests -Dmaven.test.skip=true'          
-            sh ' mvn deploy -DskipTests -Dmaven.test.skip=true -DarchivaURL=http://' + ARCHIVA_IP + ':8484'                               
-        }                
+            sh ' mvn package -DskipTests -Dmaven.test.skip=true'
+            sh ' mvn deploy -DskipTests -Dmaven.test.skip=true -DarchivaURL=http://' + ARCHIVA_IP + ':8484'
+        }
+	propagate: false	
     }
+
+    stage ('Docker image')
+    {
+	sh './build-merge-image.sh'
+	sh ' docker push jlojosnegros/curso­ci­practica:dev'
+    }
+
+
 }
