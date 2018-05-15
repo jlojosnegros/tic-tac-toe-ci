@@ -31,14 +31,7 @@ public class TicTacToeGameCucumberTest {
         WebApp.stop();
     }
 
-    @Rule
-    public static BrowserWebDriverContainer chromeOne = new BrowserWebDriverContainer()
-            .withDesiredCapabilities(DesiredCapabilities.chrome())
-            .withRecordingMode(RECORD_ALL, new File("target"));
-    @Rule
-    public static BrowserWebDriverContainer chromeTwo= new BrowserWebDriverContainer()
-            .withDesiredCapabilities(DesiredCapabilities.chrome())
-            .withRecordingMode(RECORD_ALL, new File("target"));
+
 
 
 }

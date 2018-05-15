@@ -27,6 +27,14 @@ import static org.testcontainers.containers.BrowserWebDriverContainer.VncRecordi
 
 public class TicTacToePlayGameCucumberRunSteps {
 
+    @Rule
+    public static BrowserWebDriverContainer chromeOne = new BrowserWebDriverContainer()
+            .withDesiredCapabilities(DesiredCapabilities.chrome())
+            .withRecordingMode(RECORD_ALL, new File("target"));
+    @Rule
+    public static BrowserWebDriverContainer chromeTwo= new BrowserWebDriverContainer()
+            .withDesiredCapabilities(DesiredCapabilities.chrome())
+            .withRecordingMode(RECORD_ALL, new File("target"));
 
     static String ip = "192.168.16.1"; // ifconfig docker0
     static String URL_SUT = "http://" + ip +":12345";
@@ -38,8 +46,8 @@ public class TicTacToePlayGameCucumberRunSteps {
 
     @Before
     public void beforeEach() {
-        driverPlayerOne = TicTacToeGameCucumberTest.chromeOne.getWebDriver();
-        driverPlayerTwo = TicTacToeGameCucumberTest.chromeTwo.getWebDriver();
+        driverPlayerOne = chromeOne.getWebDriver();
+        driverPlayerTwo = chromeTwo.getWebDriver();
     }
 
     @After
@@ -51,14 +59,15 @@ public class TicTacToePlayGameCucumberRunSteps {
 
     @Given("^I have a tictactoe game at (-?.*)$")
     public void i_have_a_tictactoe_game_at(String url) throws Throwable {
-        if (null == url)
+        if (null == driverPlayerOne)
         {
-            System.out.println("TENEMOS UN NULL EN URL!!!");
+            System.out.println("TENEMOS UN NULL EN driverPlayerOne!!!");
         }
-        else
+        if (null == driverPlayerTwo)
         {
-            System.out.println("!!!URL: " + url);
+            System.out.println("TENEMOS UN NULL EN driverPlayerTwo!!!");
         }
+
         goToHost(driverPlayerOne, url);
         goToHost(driverPlayerTwo, url);
 
