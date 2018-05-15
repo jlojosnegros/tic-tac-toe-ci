@@ -81,6 +81,9 @@ public class SeleniumSytemTest {
 
     @Test
     public void test() {
+        boolean mierda = false;
+        assertThat(mierda).isEqualTo(true);
+
         // Exercise and verify
         String interfaceName = "docker0";
         String ip = "localhost";
