@@ -2,15 +2,15 @@ node
 {
     stage ('Checkout')
     {
-	GERRIT_IP = sh (
+        GERRIT_IP = sh (
                script: 'docker inspect -f \'{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}\' codeurjc-forge-gerrit',
                returnStdout: true
-	       ).trim()
+               ).trim()
 
 
         git url: 'http://' + GERRIT_IP + ':8080/tic-tac-toe'
     }
-    stage ('Build and test')
+    stage ('Test')
     {
         docker.image('maven').inside('-p 12345:8080 -v $HOME/.m2:/root/.m2 ' + '-v /var/run/docker.sock:/var/run/docker.sock')
         {
@@ -19,27 +19,43 @@ node
         junit testResults: '**/target/surefire-reports/*.xml', keepLongStdio: true
     }
 
-    
-    stage ('Archive')
+    stage('Build Target')
     {
-        ARCHIVA_IP = sh (
-               script: 'docker inspect -f \'{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}\' codeurjc-forge-archiva',
-               returnStdout: true
-               ).trim()
-
-        docker.image('maven').inside('-v $HOME/.m2:/root/.m2') {
-
+        docker.image('maven').inside('-v $HOME/.m2:/root/.m2')
+        {
             sh ' mvn package -DskipTests -Dmaven.test.skip=true'
-            sh ' mvn deploy -DskipTests -Dmaven.test.skip=true -DarchivaURL=http://' + ARCHIVA_IP + ':8484'
         }
-	propagate: false	
     }
 
-    stage ('Docker image')
-    {
-	sh './build-merge-image.sh'
-	sh ' docker push jlojosnegros/curso-ci-practica:dev'
+    parallel docker: {
+        try {
+            stage ('Docker image')
+            {
+                sh 'chmod 777 ./build-merge-image.sh'
+                sh './build-merge-image.sh'
+                sh 'docker login -u practicacimasterupm -p 12341234'
+                sh 'docker push practicacimasterupm/curso-ci-practica:dev'
+            }
+        } catch (Exception err) {
+            echo "Unable to create Docker image"
+        }
+    }, archiva: {
+        try {
+            stage ('Archive')
+            {
+                ARCHIVA_IP = sh (
+                       script: 'docker inspect -f \'{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}\' codeurjc-forge-archiva',
+                       returnStdout: true
+                       ).trim()
+
+                docker.image('maven').inside('-v $HOME/.m2:/root/.m2') {
+                    sh ' mvn deploy -DskipTests -Dmaven.test.skip=true -DarchivaURL=http://localhost:8484'
+                }
+
+            }
+        } catch (Exception err) {
+            echo "Cannot publish to archiva"
+        }
+
     }
-
-
 }
