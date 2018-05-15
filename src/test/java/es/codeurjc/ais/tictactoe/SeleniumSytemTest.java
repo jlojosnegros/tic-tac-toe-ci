@@ -82,32 +82,32 @@ public class SeleniumSytemTest {
     @Test
     public void test() {
         // Exercise and verify
-        String interfaceName = "docker0";
-        String ip = "localhost";
-        try {
-            NetworkInterface networkInterface = NetworkInterface.getByName(interfaceName);
-            Enumeration<InetAddress> inetAddress = networkInterface.getInetAddresses();
-            InetAddress currentAddress;
-            currentAddress = inetAddress.nextElement();
-
-            while(inetAddress.hasMoreElements())
-            {
-                currentAddress = inetAddress.nextElement();
-                if(currentAddress instanceof Inet4Address && !currentAddress.isLoopbackAddress())
-                {
-                    ip = currentAddress.toString();
-                    break;
-                }
-            }
-        }
-        catch (java.net.SocketException e)
-        {
-            assertThat(false);
-        }
+//        String interfaceName = "docker0";
+        String ip = "192.168.16.1"; // ifconfig docker0
+//        try {
+//            NetworkInterface networkInterface = NetworkInterface.getByName(interfaceName);
+//            Enumeration<InetAddress> inetAddress = networkInterface.getInetAddresses();
+//            InetAddress currentAddress;
+//            currentAddress = inetAddress.nextElement();
+//
+//            while(inetAddress.hasMoreElements())
+//            {
+//                currentAddress = inetAddress.nextElement();
+//                if(currentAddress instanceof Inet4Address && !currentAddress.isLoopbackAddress())
+//                {
+//                    ip = currentAddress.toString();
+//                    break;
+//                }
+//            }
+//        }
+//        catch (java.net.SocketException e)
+//        {
+//            assertThat(false);
+//        }
 
         System.out.println("-++++ " + ip);
 
-        String URL_SUT = "http://"+ip+":12345";
+        String URL_SUT = "http://"+ip+":12345"; // -p 12345:8080 ( because gerrit is already using port 8080 )
         goToHost(driverPlayerOne, URL_SUT);
         registerUser(namePlayerOne, driverPlayerOne);
 
