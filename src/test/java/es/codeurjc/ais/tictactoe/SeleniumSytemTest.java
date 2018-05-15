@@ -9,18 +9,28 @@ import org.junit.runners.Parameterized.Parameter;
 import org.junit.runners.Parameterized.Parameters;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
+import org.openqa.selenium.remote.DesiredCapabilities;
+import org.openqa.selenium.remote.RemoteWebDriver;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
+import org.testcontainers.containers.BrowserWebDriverContainer;
 
+import java.io.File;
 import java.net.MalformedURLException;
 import java.util.Arrays;
 import java.util.Collection;
 
 import static es.codeurjc.ais.tictactoe.SystemAndAcceptanceTestUtilities.*;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
+import static org.testcontainers.containers.BrowserWebDriverContainer.VncRecordingMode.RECORD_ALL;
 
 @RunWith(Parameterized.class)
 public class SeleniumSytemTest {
+
+    @Rule
+    public BrowserWebDriverContainer chrome = new BrowserWebDriverContainer()
+            .withDesiredCapabilities(DesiredCapabilities.chrome())
+            .withRecordingMode(RECORD_ALL, new File("target"));
 
     private static String namePlayerOne = "player One";
     private static String namePlayerTwo = "player Two";
@@ -40,8 +50,8 @@ public class SeleniumSytemTest {
     @Parameter(1) public String result;
 
 
-    private WebDriver driverPlayerOne;
-    private WebDriver driverPlayerTwo;
+    private RemoteWebDriver driverPlayerOne;
+    private RemoteWebDriver driverPlayerTwo;
 
     @BeforeClass
     public static void beforeAll() {
@@ -56,8 +66,8 @@ public class SeleniumSytemTest {
 
     @Before
     public void beforeEach() {
-        driverPlayerOne = new ChromeDriver();
-        driverPlayerTwo = new ChromeDriver();
+        driverPlayerOne = chrome.getWebDriver();
+        driverPlayerTwo = chrome.getWebDriver();
     }
 
     @After

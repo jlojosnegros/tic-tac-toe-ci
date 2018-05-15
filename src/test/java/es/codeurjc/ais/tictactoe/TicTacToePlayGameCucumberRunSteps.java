@@ -8,29 +8,41 @@ import cucumber.api.java.en.And;
 import cucumber.api.java.en.Given;
 import cucumber.api.java.en.Then;
 import cucumber.api.java.en.When;
+import org.junit.Rule;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
+import org.openqa.selenium.remote.DesiredCapabilities;
+import org.openqa.selenium.remote.RemoteWebDriver;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
+import org.testcontainers.containers.BrowserWebDriverContainer;
+
+import java.io.File;
 
 import static es.codeurjc.ais.tictactoe.SystemAndAcceptanceTestUtilities.*;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
+import static org.testcontainers.containers.BrowserWebDriverContainer.VncRecordingMode.RECORD_ALL;
 
 public class TicTacToePlayGameCucumberRunSteps {
+
+    @Rule
+    public BrowserWebDriverContainer chrome = new BrowserWebDriverContainer()
+            .withDesiredCapabilities(DesiredCapabilities.chrome())
+            .withRecordingMode(RECORD_ALL, new File("target"));
 
     static String URL_SUT = "http://localhost:8080";
     static String cellIdString = "cell-";
 
-    private WebDriver driverPlayerOne;
-    private WebDriver driverPlayerTwo;
+    private RemoteWebDriver driverPlayerOne;
+    private RemoteWebDriver driverPlayerTwo;
     private WebDriver lastMove;
 
     @Before
     public void beforeEach() {
-        driverPlayerOne = new ChromeDriver();
-        driverPlayerTwo = new ChromeDriver();
+        driverPlayerOne = chrome.getWebDriver();
+        driverPlayerTwo = chrome.getWebDriver();
     }
 
     @After
