@@ -38,7 +38,7 @@ node
     stage ('Docker image')
     {
 	sh './build-merge-image.sh'
-	sh ' docker push jlojosnegros/curso­ci­practica:dev'
+	sh ' docker push jlojosnegros/curso-ci-practica:dev'
     }
 
 
