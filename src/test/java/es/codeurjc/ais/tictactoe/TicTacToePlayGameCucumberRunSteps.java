@@ -31,8 +31,8 @@ public class TicTacToePlayGameCucumberRunSteps {
     public BrowserWebDriverContainer chrome = new BrowserWebDriverContainer()
             .withDesiredCapabilities(DesiredCapabilities.chrome())
             .withRecordingMode(RECORD_ALL, new File("target"));
-
-    static String URL_SUT = "http://localhost:8080";
+    static String ip = "192.168.16.1"; // ifconfig docker0
+    static String URL_SUT = "http://" + ip +":12345";
     static String cellIdString = "cell-";
 
     private RemoteWebDriver driverPlayerOne;
