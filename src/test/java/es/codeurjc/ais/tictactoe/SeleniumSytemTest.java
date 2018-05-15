@@ -16,9 +16,13 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 import org.testcontainers.containers.BrowserWebDriverContainer;
 
 import java.io.File;
+import java.net.Inet4Address;
+import java.net.InetAddress;
 import java.net.MalformedURLException;
+import java.net.NetworkInterface;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Enumeration;
 
 import static es.codeurjc.ais.tictactoe.SystemAndAcceptanceTestUtilities.*;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
@@ -79,7 +83,30 @@ public class SeleniumSytemTest {
     @Test
     public void test() {
         // Exercise and verify
-        String URL_SUT = "http://localhost:8080";
+        String interfaceName = "docker0";
+        String ip = "localhost";
+        try {
+            NetworkInterface networkInterface = NetworkInterface.getByName(interfaceName);
+            Enumeration<InetAddress> inetAddress = networkInterface.getInetAddresses();
+            InetAddress currentAddress;
+            currentAddress = inetAddress.nextElement();
+
+            while(inetAddress.hasMoreElements())
+            {
+                currentAddress = inetAddress.nextElement();
+                if(currentAddress instanceof Inet4Address && !currentAddress.isLoopbackAddress())
+                {
+                    ip = currentAddress.toString();
+                    break;
+                }
+            }
+        }
+        catch (java.net.SocketException e)
+        {
+            assertThat(false);
+        }
+
+        String URL_SUT = "http://"+ip+":8080";
         goToHost(driverPlayerOne, URL_SUT);
         registerUser(namePlayerOne, driverPlayerOne);
 
