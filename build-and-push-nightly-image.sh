@@ -4,9 +4,12 @@ current_pom_version=`mvn -q -Dexec.executable="echo" -Dexec.args='${project.vers
 date=`date +%Y%m%d`
 string='nightly'
 
+echo "current_pom_version=$current_pom_version"
+echo "date=$date"
 
 match_expression='^([0-9]*)\.([0-9]*)\.([0-9]*)-(.*)$'
 
+tag=""
 if [[ ${current_pom_version} =~ $match_expression ]]; then
     tag=${BASH_REMATCH[1]}\.${BASH_REMATCH[2]}\.${BASH_REMATCH[3]}\.${string}\.${date}
 fi
