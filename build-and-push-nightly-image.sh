@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 #current_pom_version=`mvn -q -Dexec.executable="echo" -Dexec.args='${project.version}' --non-recursive org.codehaus.mojo:exec-maven-plugin:1.3.1:exec`
-current_pom_version=$1
+current_pom_version=$(cat ${1})
 date=`date +%Y%m%d`
 string='nightly'
 
