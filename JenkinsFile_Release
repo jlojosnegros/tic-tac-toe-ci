@@ -1,0 +1,87 @@
+node
+{
+    stage ('Checkout')
+    {
+        GERRIT_IP = sh (
+               script: 'docker inspect -f \'{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}\' codeurjc-forge-gerrit',
+               returnStdout: true
+               ).trim()
+        git url: 'http://' + GERRIT_IP + ':8080/tic-tac-toe'
+    }
+    stage('Change poml')
+    {
+        docker.image('maven').inside('-v $HOME/.m2:/root/.m2')
+        {
+            version = sh (
+                script:'mvn -q -Dexec.executable="echo" -Dexec.args=\'${project.version}\' --non-recursive org.codehaus.mojo:exec-maven-plugin:1.3.1:exec',
+                returnStdout: true
+                ).trim()
+            println version
+            sh 'chmod 777 ./delete-snapshot-version.sh'
+            release_version = sh (
+                script: './delete-snapshot-version.sh ' + version,
+                returnStdout: true
+                ).trim()
+            println release_version
+
+            sh 'mvn versions:set -DnewVersion=' + release_version
+        }
+    }
+    stage('Build Target')
+    {
+        docker.image('maven').inside('-v $HOME/.m2:/root/.m2')
+        {
+            sh ' mvn package -DskipTests -Dmaven.test.skip=true'
+        }
+    }
+    stage('Test')
+    {
+        return 0
+    }
+    stage('Publish artifact in Archiva')
+    {
+        return 0
+    }
+    stage ('Docker image')
+    {
+        docker.image('maven').inside('-v /tmp:/tmp -v $HOME/.m2:/root/.m2')
+        {
+            version = sh (
+                script:'mvn -q -Dexec.executable="echo" -Dexec.args=\'${project.version}\' --non-recursive org.codehaus.mojo:exec-maven-plugin:1.3.1:exec',
+                returnStdout: true
+                ).trim()
+            println version
+
+            println "... tag file ..."
+            writeFile file: "/tmp/tag", text: version
+        }
+        println "reading tag file outside docker.inside"
+        def tag = readFile('/tmp/tag').trim()
+
+        sh 'chmod 777 ./build-and-push-nightly-image.sh'
+        sh './build-and-push-nightly-image.sh ' + tag
+         sh './build-and-push-nightly-image.sh latest'
+    }
+    stage('Git tag')
+    {
+        return 0
+    }
+    stage('Update pom.xml')
+    {
+        docker.image('maven').inside('-v $HOME/.m2:/root/.m2')
+        {
+            println "new version"
+            println new_version
+            sh 'chmod 777 ./add-snapshot-version.sh'
+            final_version = sh (
+                script: './add-snapshot-version.sh ' + new_version,
+                returnStdout: true
+                ).trim()
+
+            println "final_version "
+            println final_version
+            sh 'mvn versions:set -DnewVersion=' + final_version
+        }
+    }
+
+}
