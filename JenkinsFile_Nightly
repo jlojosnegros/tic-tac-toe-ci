@@ -38,23 +38,29 @@ node
             sh ' mvn package -DskipTests -Dmaven.test.skip=true'
         }
     }
-    
+
     stage ('Docker image')
     {
-	sh 'docker login -u practicacimasterupm -p 12341234'
-	sh 'chmod 777 ./build-and-push-nightly-image.sh'
-    	sh './build-and-push-nightly-image.sh'
+	docker.image('maven').inside('-p 12345:8080 -v $HOME/.m2:/root/.m2 ' + '-v /var/run/docker.sock:/var/run/docker.sock')
+	{
+	   sh 'docker login -u practicacimasterupm -p 12341234'
+	   sh 'chmod 777 ./build-and-push-nightly-image.sh'
+    	   sh './build-and-push-nightly-image.sh'
+	}
     }
 
     stage ('execute test with docker image')
     {
 	return 0
     }
-    
+
     stage ('Docker image final')
     {
-	sh 'docker login -u practicacimasterupm -p 12341234'
-	sh 'chmod 777 ./build-and-push-nightly-tested-image.sh'
-    	sh './build-and-push-nightly-tested-image.sh'
+	docker.image('maven').inside('-p 12345:8080 -v $HOME/.m2:/root/.m2 ' + '-v /var/run/docker.sock:/var/run/docker.sock')
+	{
+		sh 'docker login -u practicacimasterupm -p 12341234'
+		sh 'chmod 777 ./build-and-push-nightly-tested-image.sh'
+    		sh './build-and-push-nightly-tested-image.sh'
+	}
     }
 }
