@@ -124,7 +124,7 @@
 		</repository>
 		<snapshotRepository>
 			<id>archiva.snapshots</id>
-			<name>Mierda</name>
+			<name>Internal Snapshots Repository</name>
 			<url>${archivaURL}/repositories/snapshots/</url>
 		</snapshotRepository>
 	</distributionManagement>
