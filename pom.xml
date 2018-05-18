@@ -123,9 +123,9 @@
 			<url>${archivaURL}/repositories/internal/</url>
 		</repository>
 		<snapshotRepository>
-			<id>archiva.snaps_de_mierda</id>
+			<id>archiva.snapshots</id>
 			<name>Mierda</name>
-			<url>${archivaURL}/repository/snapshots/</url>
+			<url>${archivaURL}/repositories/snapshots/</url>
 		</snapshotRepository>
 	</distributionManagement>
 </project>
