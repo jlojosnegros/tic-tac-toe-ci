@@ -123,7 +123,7 @@
 			<url>${archivaURL}/repositories/internal/</url>
 		</repository>
 		<snapshotRepository>
-			<id>archiva.snapshots</id>
+			<id>snapshots</id>
 			<name>Internal Snapshots Repository</name>
 			<url>${archivaURL}/repositories/snapshots/</url>
 		</snapshotRepository>
