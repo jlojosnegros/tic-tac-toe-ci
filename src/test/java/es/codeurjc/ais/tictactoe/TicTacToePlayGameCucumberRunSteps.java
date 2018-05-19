@@ -8,6 +8,8 @@ import cucumber.api.java.en.And;
 import cucumber.api.java.en.Given;
 import cucumber.api.java.en.Then;
 import cucumber.api.java.en.When;
+import org.junit.AfterClass;
+import org.junit.BeforeClass;
 import org.junit.Rule;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
@@ -39,7 +41,7 @@ public class TicTacToePlayGameCucumberRunSteps {
     private RemoteWebDriver driverPlayerTwo;
     private WebDriver lastMove;
 
-    @Before
+    @BeforeClass
     public void beforeEach() {
         chromeOne = new BrowserWebDriverContainer()
                 .withDesiredCapabilities(DesiredCapabilities.chrome())
@@ -52,7 +54,7 @@ public class TicTacToePlayGameCucumberRunSteps {
         driverPlayerTwo = chromeTwo.getWebDriver();
     }
 
-    @After
+    @AfterClass
     public void afterEach() {
         releaseWebDriver(driverPlayerOne);
         releaseWebDriver(driverPlayerTwo);
