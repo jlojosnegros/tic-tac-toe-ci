@@ -10,6 +10,13 @@ node
 
         git url: 'http://' + GERRIT_IP + ':8080/tic-tac-toe'
     }
+    stage ('Sonarqube')
+    {
+      docker.image('maven').inside('-p 9000:9000 -v $HOME/.m2:/root/.m2 ' + '--network=ci-network --link codeurjc-forge-sonarqube:sonarqube' -v /var/run/docker.sock:/var/run/docker.sock')
+      {
+        sh 'clean verify sonar:sonar -DsonarqubeURL=sonarqube'
+      }
+    }
     stage ('Unit and System Testing')
     {
         try
