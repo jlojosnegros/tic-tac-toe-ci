@@ -11,6 +11,27 @@ node
         git url: 'http://' + GERRIT_IP + ':8080/tic-tac-toe'
     }
 
+    stage ('Unit and System Test')
+    {
+        try
+        {
+            docker.image('maven').inside('-p 12345:8080 -v $HOME/.m2:/root/.m2 ' + '-v /var/run/docker.sock:/var/run/docker.sock')
+            {
+                sh 'mvn test'
+            }
+        }
+        catch (Exception err)
+        {
+            sh 'return -1'
+        }
+        finally
+        {
+            archiveArtifacts '**/target/*.flv'
+            junit testResults: '**/target/surefire-reports/*.xml', keepLongStdio: true
+        }
+
+    }
+
     stage('Build Target')
     {
         docker.image('maven').inside('-v /var/run/docker.sock:/var/run/docker.sock')

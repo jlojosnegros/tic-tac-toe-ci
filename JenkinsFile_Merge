@@ -51,13 +51,8 @@ node
         try {
             stage ('Archive')
             {
-                ARCHIVA_IP = sh (
-                       script: 'docker inspect -f \'{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}\' codeurjc-forge-archiva',
-                       returnStdout: true
-                       ).trim()
-
-                docker.image('maven').inside('-v $HOME/.m2:/root/.m2') {
-                    sh ' mvn deploy -DskipTests -Dmaven.test.skip=true -DarchivaURL=http://' + ARCHIVA_IP + ':8484'
+		docker.image('maven').inside('--user root -v $HOME/.m2:/root/.m2 --network=ci-network --link codeurjc-forge-archiva:archiva') {                                       
+                    sh ' mvn deploy -DskipTests -Dmaven.test.skip=true -DarchivaURL=http://archiva:8080'
                 }
 
             }
