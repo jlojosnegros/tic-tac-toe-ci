@@ -1,22 +1,22 @@
-node {                   
-                         
-   stage ('Checkout') {  
-      GERRIT_IP = sh (                          
+node {
+
+   stage ('Checkout') {
+      GERRIT_IP = sh (
                script: 'docker inspect -f \'{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}\' codeurjc-forge-gerrit',
-               returnStdout: true                                                                      
+               returnStdout: true
                ).trim()
 
 
       git url: 'http://' + GERRIT_IP + ':8080/tic-tac-toe'
-   }                     
+   }
 
-   stage ('Build Java') {                          
+   stage ('Unit Testing') {                          
 
-      docker.image('maven').inside('-v $HOME/.m2:/root/.m2') {                                         
+      docker.image('maven').inside('-v $HOME/.m2:/root/.m2') {
 
-        sh 'mvn -Dtest=BoardTest,TicTacToeGameTest,TicTacToeGamePlayTest test'                         
-        junit testResults: '**/target/surefire-reports/*.xml', keepLongStdio: true                     
-      }                  
-  }                      
-                         
+        sh 'mvn -Dtest=BoardTest,TicTacToeGameTest,TicTacToeGamePlayTest test'
+        junit testResults: '**/target/surefire-reports/*.xml', keepLongStdio: true
+      }
+  }
+
 }

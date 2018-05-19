@@ -10,13 +10,13 @@ node
 
         git url: 'http://' + GERRIT_IP + ':8080/tic-tac-toe'
     }
-    stage ('Test')
+    stage ('Unit and System Testing')
     {
         try
         {
             docker.image('maven').inside('-p 12345:8080 -v $HOME/.m2:/root/.m2 ' + '-v /var/run/docker.sock:/var/run/docker.sock')
             {
-                sh 'mvn test'
+                sh 'mvn -Dtest=BoardTest,TicTacToeGameTest,TicTacToeGamePlayTest,SeleniumSytemTest test'
             }
         }
         catch (Exception err)
@@ -51,7 +51,7 @@ node
         try {
             stage ('Archive')
             {
-		docker.image('maven').inside('--user root -v $HOME/.m2:/root/.m2 --network=ci-network --link codeurjc-forge-archiva:archiva') {                                       
+		docker.image('maven').inside('--user root -v $HOME/.m2:/root/.m2 --network=ci-network --link codeurjc-forge-archiva:archiva') {
                     sh ' mvn deploy -DskipTests -Dmaven.test.skip=true -DarchivaURL=http://archiva:8080'
                 }
 

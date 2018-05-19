@@ -34,7 +34,7 @@ node
         {
             docker.image('maven').inside('-p 12345:8080 -v $HOME/.m2:/root/.m2 ' + '-v /var/run/docker.sock:/var/run/docker.sock')
             {
-                sh 'mvn test'
+                sh 'mvn -Dtest=BoardTest,TicTacToeGameTest,TicTacToeGamePlayTest,SeleniumSytemTest test'
             }
         }
         catch (Exception err)
@@ -64,7 +64,7 @@ node
             sh ' mvn deploy -DskipTests -Dmaven.test.skip=true -DarchivaURL=http://archiva:8080'
         }
     }
-    
+
     stage ('Docker image')
     {
         docker.image('maven').inside('-v /tmp:/tmp -v $HOME/.m2:/root/.m2')
@@ -85,12 +85,12 @@ node
         sh './build-and-push-nightly-image.sh ' + tag
         sh './build-and-push-nightly-image.sh latest'
     }
-    
+
     stage('Git tag')
     {
         return 0
     }
-    
+
     stage('Update pom.xml')
     {
         docker.image('maven').inside('-v $HOME/.m2:/root/.m2')
