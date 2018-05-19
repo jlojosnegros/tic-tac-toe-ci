@@ -61,8 +61,8 @@ node
         println "reading tag file outside docker.inside"
         def tag = readFile('/tmp/tag').trim()
 
-        sh 'chmod 777 ./build-and-push-nightly-image.sh'
-        sh './build-and-push-nightly-image.sh ' + tag
+        sh 'chmod 777 ./build-and-push-image.sh'
+        sh './build-and-push-image.sh ' + tag
     }
 
     stage ('execute test with docker image')
@@ -72,7 +72,7 @@ node
 
     stage ('Docker image final')
     {
-        sh 'chmod 777 ./build-and-push-nightly-image.sh'
-        sh './build-and-push-nightly-image.sh ' + 'nightly'
+        sh 'chmod 777 ./build-and-push-image.sh'
+        sh './build-and-push-image.sh ' + 'nightly'
     }
 }
