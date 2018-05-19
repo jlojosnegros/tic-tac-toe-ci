@@ -14,7 +14,7 @@ node
     {
       docker.image('maven').inside('-v $HOME/.m2:/root/.m2 ' + '--network=ci-network --link codeurjc-forge-sonarqube:sonarqube -v /var/run/docker.sock:/var/run/docker.sock')
       {
-        sh 'mvn clean verify sonar:sonar -DsonarqubeURL=sonarqube'
+        sh 'mvn clean verify sonar:sonar -DsonarqubeURL=sonarqube -DskipTests -Dmaven.test.skip=true'
       }
     }
     stage ('Unit and System Testing')
