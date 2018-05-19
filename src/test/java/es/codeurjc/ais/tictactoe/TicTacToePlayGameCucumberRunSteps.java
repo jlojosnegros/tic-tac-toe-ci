@@ -56,8 +56,8 @@ public class TicTacToePlayGameCucumberRunSteps {
 
     @AfterClass
     public void afterEach() {
-        releaseWebDriver(driverPlayerOne);
-        releaseWebDriver(driverPlayerTwo);
+       // releaseWebDriver(driverPlayerOne);
+       // releaseWebDriver(driverPlayerTwo);
     }
 
 
